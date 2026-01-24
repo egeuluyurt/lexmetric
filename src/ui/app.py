@@ -57,10 +57,43 @@ st.markdown("""
 # SIDEBAR UI
 # =============================================================================
 
-# Premium Sidebar Styling - FILE-BASED INJECTION
-# Research: "The State of Frontend Customization in Streamlit" Section 9.1
-with open("src/ui/sidebar.css") as css_file:
-    st.markdown(f'<style>{css_file.read()}</style>', unsafe_allow_html=True)
+# Premium Sidebar Styling - FILE-BASED INJECTION + JS FALLBACK
+import os
+import streamlit.components.v1 as components
+
+# 1. Robust Path Resolution
+current_dir = os.path.dirname(os.path.abspath(__file__))
+css_path = os.path.join(current_dir, "sidebar.css")
+
+# 2. Inject CSS from file
+try:
+    with open(css_path) as css_file:
+        css_content = css_file.read()
+        st.markdown(f'<style>{css_content}</style>', unsafe_allow_html=True)
+except FileNotFoundError:
+    st.error(f"Sidebar CSS not found at {css_path}")
+
+# 3. JS FALLBACK (Nuclear Option)
+# If CSS fails, use JavaScript to directly manipulate the DOM
+js_injection = """
+<script>
+    function styleSidebar() {
+        const sidebar = window.parent.document.querySelector('[data-testid="stSidebar"]');
+        if (sidebar) {
+            sidebar.style.background = 'linear-gradient(180deg, #FDFCFB 0%, #F5F3F0 100%)';
+            sidebar.style.borderRight = '2px solid rgba(197, 160, 89, 0.3)';
+            
+            // Remove first child bg
+            const firstChild = sidebar.firstChild;
+            if (firstChild) firstChild.style.backgroundColor = 'transparent';
+        }
+    }
+    // Run immediately and on frequent intervals (to fight Streamlit re-renders)
+    styleSidebar();
+    setInterval(styleSidebar, 1000);
+</script>
+"""
+components.html(js_injection, height=0, width=0)
 
 # Sidebar Header
 st.sidebar.markdown("# 📁 Case Entry")
