@@ -57,54 +57,10 @@ st.markdown("""
 # SIDEBAR UI
 # =============================================================================
 
-# Premium Sidebar Styling
-st.sidebar.markdown("""
-<style>
-    /* Sidebar Premium Background - AGGRESSIVE */
-    [data-testid="stSidebar"] {
-        background: linear-gradient(180deg, #FDFCFB 0%, #F5F3F0 100%) !important;
-        border-right: 2px solid rgba(197, 160, 89, 0.3) !important;
-    }
-    
-    /* Sidebar Title */
-    [data-testid="stSidebar"] h1 {
-        font-family: 'Playfair Display', serif !important;
-        color: #1a365d !important;
-        font-weight: 900 !important;
-        font-size: 24px !important;
-    }
-    
-    /* Sidebar Subheaders */
-    [data-testid="stSidebar"] h3 {
-        font-family: 'Inter', sans-serif !important;
-        color: #1a365d !important;
-        font-weight: 700 !important;
-        font-size: 14px !important;
-        text-transform: uppercase !important;
-        letter-spacing: 0.5px !important;
-    }
-    
-    /* Input Focus - Gold */
-    [data-testid="stSidebar"] input:focus {
-        border-color: #C5A059 !important;
-        box-shadow: 0 0 0 3px rgba(197, 160, 89, 0.15) !important;
-    }
-    
-    /* Select Box Focus - Gold */
-    [data-testid="stSidebar"] [data-baseweb="select"] > div:focus-within {
-        border-color: #C5A059 !important;
-        box-shadow: 0 0 0 3px rgba(197, 160, 89, 0.15) !important;
-    }
-    
-    /* File Uploader Gold Border */
-    [data-testid="stSidebar"] [data-testid="stFileUploader"] {
-        background: white !important;
-        border: 2px dashed rgba(197, 160, 89, 0.4) !important;
-        border-radius: 8px !important;
-        padding: 16px !important;
-    }
-</style>
-""", unsafe_allow_html=True)
+# Premium Sidebar Styling - FILE-BASED INJECTION
+# Research: "The State of Frontend Customization in Streamlit" Section 9.1
+with open("src/ui/sidebar.css") as css_file:
+    st.markdown(f'<style>{css_file.read()}</style>', unsafe_allow_html=True)
 
 # Sidebar Header
 st.sidebar.markdown("# 📁 Case Entry")
@@ -168,6 +124,12 @@ if st.sidebar.button("⚠️ Reset & Clear Cache", key="reset_btn"):
     st.cache_data.clear()
     st.cache_resource.clear()
     st.rerun()
+
+# Premium Sidebar Styling - FILE-BASED INJECTION
+# Research: "The State of Frontend Customization in Streamlit" Section 9.1
+with open("src/ui/sidebar.css") as css_file:
+    st.markdown(f'<style>{css_file.read()}</style>', unsafe_allow_html=True)
+
 
 # =============================================================================
 # VIEW NAVIGATION
