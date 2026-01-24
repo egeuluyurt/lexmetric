@@ -128,6 +128,25 @@ def render_cockpit(df):
                 required=True,
                 help="Adjust risk level manually if needed"
             ), 
+            "Overall_Anomaly_Score": st.column_config.ProgressColumn(
+                "Anomaly Score",
+                format="%d",
+                min_value=0,
+                max_value=100,
+                width="medium",
+                help="Forensic Score based on round numbers, frequency, and velocity (0-100)"
+            ),
+            "Is_Round_Number": st.column_config.CheckboxColumn(
+                "Round #",
+                width="small",
+                default=False,
+                help="Flagged as suspicious round number (e.g., $10,000.00)"
+            ),
+            "Frequency_Pattern_Group": st.column_config.TextColumn(
+                "Pattern Group",
+                width="medium",
+                help="Grouping for recurring payments to same recipient"
+            ),
             "Date": st.column_config.DatetimeColumn("Date", format="D MMM YYYY"), 
             "Description_Highlighted": st.column_config.TextColumn("Description", width="large", help="Highlighted keywords show AI decision factors"), 
             "amount": st.column_config.NumberColumn("Amount", format="$%.2f"),
@@ -142,8 +161,8 @@ def render_cockpit(df):
             "Forensic_Reasoning": st.column_config.TextColumn("AI Reasoning", width="medium", help="System Logic"),
             "Attorney_Notes": st.column_config.TextColumn("⚖️ Attorney Notes", width="large", required=False),
         }, 
-        # FORCE COLUMN ORDER (added Confidence)
-        column_order=("Status", "Audit_Flag", "Risk_Level", "Date", "Description_Highlighted", "amount", "Confidence", "Forensic_Reasoning", "Attorney_Notes"), 
+        # FORCE COLUMN ORDER (added Anomaly features)
+        column_order=("Status", "Audit_Flag", "Risk_Level", "Overall_Anomaly_Score", "Is_Round_Number", "Date", "Description_Highlighted", "amount", "Frequency_Pattern_Group", "Forensic_Reasoning", "Attorney_Notes"), 
         use_container_width=True, 
         hide_index=True, 
         num_rows="fixed", 

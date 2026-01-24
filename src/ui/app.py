@@ -218,12 +218,66 @@ def nuclear_deduplication(df: pd.DataFrame) -> pd.DataFrame:
     df = df.reset_index(drop=True)
     return df
 
+def clean_financial_dataframe(df: pd.DataFrame) -> pd.DataFrame:
+    """
+    Standardize and clean financial data immediately after ingestion.
+    Fixes: Currency strings, missing columns, standardized names
+    """
+    if df.empty:
+        return df
+        
+    # 1. Normalize Header Names (Case-insensitive)
+    df.columns = df.columns.astype(str).str.strip()
+    col_map = {c.lower(): c for c in df.columns}
+    
+    # Map common variations to standard names
+    renames = {}
+    if 'date' not in col_map and 'transaction date' in col_map: renames[col_map['transaction date']] = 'Date'
+    if 'amount' not in col_map and 'debit' in col_map: renames[col_map['debit']] = 'amount'
+    if 'description' not in col_map and 'transaction details' in col_map: renames[col_map['transaction details']] = 'Description'
+    
+    if renames:
+        df = df.rename(columns=renames)
+        col_map = {c.lower(): c for c in df.columns} # Update map
+
+    # 2. Ensure Critical Columns Exist
+    for required in ['Date', 'Description', 'amount']:
+        if required not in df.columns:
+            # Try finding case-insensitive match
+            match = col_map.get(required.lower())
+            if match:
+                df = df.rename(columns={match: required})
+            else:
+                # Create empty if missing (last resort)
+                df[required] = None
+
+    # 3. Clean Amount Column (CRITICAL FIX)
+    if 'amount' in df.columns:
+        # Remove currency symbols, commas, spaces
+        df['amount'] = df['amount'].astype(str).str.replace(r'[$,\s]', '', regex=True)
+        # Convert to numeric, coercing errors to NaN then 0
+        df['amount'] = pd.to_numeric(df['amount'], errors='coerce').fillna(0.0)
+
+    # 4. Clean Date Column
+    if 'Date' in df.columns:
+        df['Date'] = pd.to_datetime(df['Date'], errors='coerce')
+
+    # 5. Clean Description
+    if 'Description' in df.columns:
+        df['Description'] = df['Description'].fillna('').astype(str).str.strip()
+
+    return df
+
 def build_context_description(df: pd.DataFrame) -> pd.DataFrame:
     """
     Enriches 'Description' column with context from other columns
     """
-    if df.empty or 'Description' not in df.columns:
+    if df.empty:
         return df
+        
+    # Ensure Description exists (safety)
+    if 'Description' not in df.columns:
+        df['Description'] = ''
     
     def build_context(row):
         original = str(row.get('Description', ''))
@@ -353,6 +407,10 @@ for f in uploaded_files:
 # Combine and process data
 if all_data:
     combined = pd.concat(all_data, ignore_index=True)
+    
+    # CRITICAL: Clean data immediately after merge (strips currency symbols)
+    combined = clean_financial_dataframe(combined)
+    
     combined = nuclear_deduplication(combined)
     combined = build_context_description(combined)
     

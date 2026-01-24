@@ -85,6 +85,7 @@ def detect_frequency_patterns(df: pd.DataFrame, min_occurrences: int = 3) -> pd.
     if df.empty or 'Description' not in df.columns:
         df['Frequency_Pattern_Group'] = None
         df['Pattern_Total'] = 0
+        df['Pattern_Count'] = 0
         return df
     
     # Normalize descriptions for grouping
@@ -235,10 +236,11 @@ def get_anomaly_summary(df: pd.DataFrame) -> Dict[str, any]:
     
     # Top frequency patterns
     if 'Frequency_Pattern_Group' in df.columns:
-        top_patterns = df[df['Frequency_Pattern_Group'].notna()].groupby('Frequency_Pattern_Group').agg({
-            'Pattern_Total': 'first',
-            'Pattern_Count': 'first'
-        }).sort_values('Pattern_Total', ascending=False).head(5)
+        agg_dict = {'Pattern_Total': 'first'}
+        if 'Pattern_Count' in df.columns:
+            agg_dict['Pattern_Count'] = 'first'
+            
+        top_patterns = df[df['Frequency_Pattern_Group'].notna()].groupby('Frequency_Pattern_Group').agg(agg_dict).sort_values('Pattern_Total', ascending=False).head(5)
         
         summary['top_patterns'] = top_patterns.to_dict('index')
     
