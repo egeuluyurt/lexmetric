@@ -27,6 +27,8 @@ from src.intelligence.classifier import TransactionClassifier
 from src.ui.cockpit import render_cockpit
 from src.ui.styles import inject_production_css
 from src.ui.dashboard import render_dashboard, save_case
+from src.config.jurisdictions import get_effective_divisor, get_ny_regions, MEDICAID_RULES_TEMPORAL
+from src.audit_engine.anomaly_detection import run_anomaly_detection
 
 # === PAGE CONFIGURATION ===
 st.set_page_config(
@@ -58,38 +60,48 @@ st.markdown("""
 # Premium Sidebar Styling
 st.sidebar.markdown("""
 <style>
-    /* Sidebar Premium Background */
+    /* Sidebar Premium Background - AGGRESSIVE */
     [data-testid="stSidebar"] {
-        background: linear-gradient(180deg, rgba(253, 252, 251, 1) 0%, rgba(245, 243, 240, 1) 100%);
-        border-right: 2px solid rgba(197, 160, 89, 0.2);
+        background: linear-gradient(180deg, #FDFCFB 0%, #F5F3F0 100%) !important;
+        border-right: 2px solid rgba(197, 160, 89, 0.3) !important;
     }
     
     /* Sidebar Title */
     [data-testid="stSidebar"] h1 {
-        font-family: 'Playfair Display', serif;
-        color: #1a365d;
-        font-weight: 900;
-        font-size: 24px;
-        margin-bottom: 8px;
+        font-family: 'Playfair Display', serif !important;
+        color: #1a365d !important;
+        font-weight: 900 !important;
+        font-size: 24px !important;
     }
     
-    /* Input Focus State - Gold */
+    /* Sidebar Subheaders */
+    [data-testid="stSidebar"] h3 {
+        font-family: 'Inter', sans-serif !important;
+        color: #1a365d !important;
+        font-weight: 700 !important;
+        font-size: 14px !important;
+        text-transform: uppercase !important;
+        letter-spacing: 0.5px !important;
+    }
+    
+    /* Input Focus - Gold */
     [data-testid="stSidebar"] input:focus {
         border-color: #C5A059 !important;
-        box-shadow: 0 0 0 3px rgba(197, 160, 89, 0.1) !important;
+        box-shadow: 0 0 0 3px rgba(197, 160, 89, 0.15) !important;
     }
     
-    /* Select Box Focus */
-    [data-testid="stSidebar"] [data-baseweb="select"] > div {
+    /* Select Box Focus - Gold */
+    [data-testid="stSidebar"] [data-baseweb="select"] > div:focus-within {
         border-color: #C5A059 !important;
+        box-shadow: 0 0 0 3px rgba(197, 160, 89, 0.15) !important;
     }
     
-    /* File Uploader Premium Card */
+    /* File Uploader Gold Border */
     [data-testid="stSidebar"] [data-testid="stFileUploader"] {
-        background: white;
-        border: 2px dashed rgba(197, 160, 89, 0.3);
-        border-radius: 8px;
-        padding: 16px;
+        background: white !important;
+        border: 2px dashed rgba(197, 160, 89, 0.4) !important;
+        border-radius: 8px !important;
+        padding: 16px !important;
     }
 </style>
 """, unsafe_allow_html=True)
@@ -113,34 +125,32 @@ jurisdiction = st.sidebar.selectbox(
     label_visibility="collapsed"
 )
 
-# Medicaid Rules Display
-MEDICAID_RULES = {
-    "New York": {"divisor": "$15,150", "gift_cap": "$2000"},
-    "Pennsylvania": {"divisor": "$482.50", "gift_cap": "$500"},
-    "California": {"divisor": "$11,576", "gift_cap": "$2000"},
-    "Florida": {"divisor": "$10,809", "gift_cap": "$2000"},
-    "Texas": {"divisor": "$242.60 (daily)", "gift_cap": "$1000"},
-    "Ohio": {"divisor": "$7,453", "gift_cap": "$1500"},
-    "New Jersey": {"divisor": "$14,785", "gift_cap": "$2000"}
-}
+# Map fullnames to state codes
+state_map = {"New York": "NY", "Pennsylvania": "PA", "California": "CA", "Florida": "FL", "Texas": "TX", "Ohio": "OH", "New Jersey": "NJ"}
+state_code = state_map[jurisdiction]
 
-rules = MEDICAID_RULES.get(jurisdiction, MEDICAID_RULES["Pennsylvania"])
+# NY Regional Selector (if applicable)
+ny_region = None
+if state_code == "NY":
+    st.sidebar.markdown("#### 🏙️ NY Region")
+    ny_region = st.sidebar.selectbox("Select NY Region", options=get_ny_regions(), key="ny_region_select", label_visibility="collapsed")
+
+# Get effective divisor using temporal system
+try:
+    divisor_data = get_effective_divisor(state_code, region=ny_region)
+    divisor_display = f"${divisor_data['divisor']:,.2f}"
+    if divisor_data['type'] == 'daily': divisor_display += " / day"
+    else: divisor_display += " / month"
+    subtitle = divisor_data.get('region', divisor_data.get('year', 'Current Rate'))
+    lookback_display = f"{divisor_data['lookback_months']} months"
+except Exception as e:
+    divisor_display = "Error"; subtitle = str(e); lookback_display = "60 months"
 
 st.sidebar.markdown(f"""
-<div style="
-    background: white;
-    border-left: 3px solid #C5A059;
-    padding: 16px;
-    margin: 16px 0;
-    border-radius: 4px;
-">
-<div style="font-family: 'Playfair Display', serif; font-weight: 700; color: #1a365d; margin-bottom: 8px;">
-        {jurisdiction} Rules
-</div>
-<div style="font-family: 'JetBrains Mono', monospace; font-size: 12px; line-height: 1.6;">
-        <strong>Divisor:</strong> {rules['divisor']}<br>
-        <strong>Gift Cap:</strong> {rules['gift_cap']}
-</div>
+<div style="background:white;border-left:3px solid #C5A059;padding:16px;margin:16px 0;border-radius:4px;">
+<div style="font-family:'Playfair Display',serif;font-weight:700;color:#1a365d;margin-bottom:4px;">{jurisdiction}</div>
+<div style="font-family:'Inter',sans-serif;font-size:11px;color:#64748B;margin-bottom:8px;">{subtitle}</div>
+<div style="font-family:'JetBrains Mono',monospace;font-size:12px;line-height:1.6;"><strong>Penalty Divisor:</strong> {divisor_display}<br><strong>Look-Back:</strong> {lookback_display}</div>
 </div>
 """, unsafe_allow_html=True)
 
@@ -333,6 +343,15 @@ if all_data:
     with st.spinner("🤖 AI Risk Analysis in Progress..."):
         classifier = TransactionClassifier()
         analyzed = classifier.process_ledger_batches(combined, batch_size=20)
+    
+    # Run Anomaly Detection
+    with st.spinner("🔍 Running Anomaly Detection..."):
+        analyzed = run_anomaly_detection(analyzed)
+        
+        # Log anomaly summary
+        from src.audit_engine.anomaly_detection import get_anomaly_summary
+        anomaly_stats = get_anomaly_summary(analyzed)
+        logger.info(f"Anomaly Detection: {anomaly_stats['total_anomalies']} anomalies found")
     
     # Render Cockpit
     render_cockpit(analyzed)
