@@ -88,6 +88,140 @@ def inject_production_css():
         }
         
         /* ==========================================
+           SIDEBAR - BESPOKE LUXURY DESIGN
+           ========================================== */
+        
+        /* Sidebar Background - Cream Gradient */
+        [data-testid="stSidebar"] {
+            background: linear-gradient(180deg, #FDFCFB 0%, #F5F3F0 100%) !important;
+            border-right: 2px solid rgba(197, 160, 89, 0.3) !important;
+        }
+        
+        /* Remove default Streamlit sidebar bg */
+        [data-testid="stSidebar"] > div:first-child {
+            background-color: transparent !important;
+        }
+        
+        /* Sidebar Title Styling */
+        [data-testid="stSidebar"] h1 {
+            font-family: var(--font-serif) !important;
+            color: var(--legal-blue) !important;
+            font-weight: 900 !important;
+            font-size: 24px !important;
+            margin-bottom: 12px !important;
+        }
+        
+        /* Sidebar Section Headers */
+        [data-testid="stSidebar"] h3 {
+            font-family: var(--font-sans) !important;
+            color: var(--legal-blue) !important;
+            font-weight: 700 !important;
+            font-size: 13px !important;
+            text-transform: uppercase !important;
+            letter-spacing: 1px !important;
+            margin-top: 24px !important;
+            margin-bottom: 12px !important;
+        }
+        
+        [data-testid="stSidebar"] h4 {
+            font-family: var(--font-sans) !important;
+            color: var(--text-muted) !important;
+            font-weight: 600 !important;
+            font-size: 12px !important;
+            margin-top: 16px !important;
+            margin-bottom: 8px !important;
+        }
+        
+        /* Sidebar Labels */
+        [data-testid="stSidebar"] label {
+            font-family: var(--font-sans) !important;
+            color: var(--text-muted) !important;
+            font-size: 12px !important;
+            font-weight: 600 !important;
+            text-transform: uppercase !important;
+            letter-spacing: 0.5px !important;
+        }
+        
+        /* Input Fields in Sidebar - Gold Focus */
+        [data-testid="stSidebar"] input {
+            background: white !important;
+            border: 1.5px solid rgba(26, 54, 93, 0.15) !important;
+            border-radius: 4px !important;
+            padding: 10px 12px !important;
+            font-family: var(--font-sans) !important;
+            font-size: 14px !important;
+            transition: all 0.3s ease !important;
+        }
+        
+        [data-testid="stSidebar"] input:focus {
+            border-color: var(--accent-gold) !important;
+            box-shadow: 0 0 0 3px rgba(197, 160, 89, 0.15) !important;
+            outline: none !important;
+        }
+        
+        /* Select Boxes - Gold Focus */
+        [data-testid="stSidebar"] [data-baseweb="select"] > div {
+            background: white !important;
+            border: 1.5px solid rgba(26, 54, 93, 0.15) !important;
+            border-radius: 4px !important;
+            transition: all 0.3s ease !important;
+        }
+        
+        [data-testid="stSidebar"] [data-baseweb="select"] > div:focus-within {
+            border-color: var(--accent-gold) !important;
+            box-shadow: 0 0 0 3px rgba(197, 160, 89, 0.15) !important;
+        }
+        
+        /* File Uploader - Gold Dashed Border */
+        [data-testid="stSidebar"] [data-testid="stFileUploader"] {
+            background: white !important;
+            border: 2px dashed rgba(197, 160, 89, 0.5) !important;
+            border-radius: 8px !important;
+            padding: 20px !important;
+            transition: all 0.3s ease !important;
+        }
+        
+        [data-testid="stSidebar"] [data-testid="stFileUploader"]:hover {
+            border-color: var(--accent-gold) !important;
+            background: rgba(197, 160, 89, 0.03) !important;
+        }
+        
+        /* Sidebar Buttons */
+        [data-testid="stSidebar"] button {
+            background: var(--legal-blue) !important;
+            color: white !important;
+            border: none !important;
+            border-radius: 4px !important;
+            padding: 10px 20px !important;
+            font-family: var(--font-sans) !important;
+            font-weight: 600 !important;
+            font-size: 13px !important;
+            text-transform: uppercase !important;
+            letter-spacing: 0.5px !important;
+            transition: all 0.3s ease !important;
+        }
+        
+        [data-testid="stSidebar"] button:hover {
+            background: #0f1f3d !important;
+            box-shadow: 0 4px 12px rgba(26, 54, 93, 0.25) !important;
+            transform: translateY(-1px) !important;
+        }
+        
+        /* Sidebar Markdown Content */
+        [data-testid="stSidebar"] .stMarkdown {
+            font-family: var(--font-sans) !important;
+        }
+        
+        /* Horizontal Rule in Sidebar - Gold */
+        [data-testid="stSidebar"] hr {
+            border: none !important;
+            height: 1px !important;
+            background: linear-gradient(to right, transparent, rgba(197, 160, 89, 0.3), transparent) !important;
+            margin: 24px 0 !important;
+        }
+
+        
+        /* ==========================================
            TYPOGRAPHY
            ========================================== */
         
