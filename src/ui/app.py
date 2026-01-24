@@ -73,24 +73,46 @@ try:
 except FileNotFoundError:
     st.error(f"Sidebar CSS not found at {css_path}")
 
-# 3. JS FALLBACK (Nuclear Option)
-# If CSS fails, use JavaScript to directly manipulate the DOM
+# 3. JS FALLBACK (Nuclear Option - MutationObserver)
+# Strategy C: Active DOM Monitoring
 js_injection = """
 <script>
-    function styleSidebar() {
+    // Target Styles
+    const targetGradient = 'linear-gradient(180deg, #FDFCFB 0%, #F5F3F0 100%)';
+    const targetBorder = '2px solid rgba(197, 160, 89, 0.3)';
+
+    function applyLexMetricStyles() {
         const sidebar = window.parent.document.querySelector('[data-testid="stSidebar"]');
         if (sidebar) {
-            sidebar.style.background = 'linear-gradient(180deg, #FDFCFB 0%, #F5F3F0 100%)';
-            sidebar.style.borderRight = '2px solid rgba(197, 160, 89, 0.3)';
+            // Apply style to parent
+            sidebar.style.background = targetGradient;
+            sidebar.style.borderRight = targetBorder;
             
-            // Remove first child bg
-            const firstChild = sidebar.firstChild;
-            if (firstChild) firstChild.style.backgroundColor = 'transparent';
+            // Deep Clean: Make all opaque children transparent
+            const children = sidebar.querySelectorAll('div');
+            children.forEach(child => {
+                const computed = window.getComputedStyle(child);
+                if (computed.backgroundColor !== 'rgba(0, 0, 0, 0)' && computed.backgroundColor !== 'transparent') {
+                    child.style.backgroundColor = 'transparent';
+                }
+            });
         }
     }
-    // Run immediately and on frequent intervals (to fight Streamlit re-renders)
-    styleSidebar();
-    setInterval(styleSidebar, 1000);
+
+    // MutationObserver to catch React re-renders instantly
+    const observer = new MutationObserver((mutations) => {
+        applyLexMetricStyles();
+    });
+
+    // Start observing the body
+    observer.observe(window.parent.document.body, { 
+        childList: true, 
+        subtree: true, 
+        attributes: true 
+    });
+
+    // Initial run
+    applyLexMetricStyles();
 </script>
 """
 components.html(js_injection, height=0, width=0)

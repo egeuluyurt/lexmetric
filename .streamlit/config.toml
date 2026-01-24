@@ -1,0 +1,10 @@
+[theme]
+base = "light"
+primaryColor = "#1a365d"       # LexMetric Legal Blue
+backgroundColor = "#FDFCFB"    # Main Page Background (Ivory)
+secondaryBackgroundColor = "#FDFCFB" # Sidebar Background (Ivory - Matches Gradient Start)
+textColor = "#1E293B"
+font = "sans serif"
+
+[theme.sidebar]
+backgroundColor = "#FDFCFB"
