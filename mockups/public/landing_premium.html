@@ -1,0 +1,499 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LexMetric | The Intelligent Standard in Medicaid Defense</title>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=Inter:wght@300;400;500;600&display=swap"
+        rel="stylesheet">
+    <style>
+        :root {
+            --bg-ivory: #FDFCFB;
+            --slate-900: #1E293B;
+            --accent-gold: #C5A059;
+            --legal-blue: #1a365d;
+            /* LexMetric brand navy */
+            --border-light: rgba(26, 54, 93, 0.08);
+            --text-muted: #64748B;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--bg-ivory);
+            color: var(--slate-900);
+            line-height: 1.7;
+            letter-spacing: -0.01em;
+        }
+
+        /* Elegant Paper Texture */
+        body::before {
+            content: "";
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: url('https://www.transparenttextures.com/patterns/cream-paper.png');
+            opacity: 0.15;
+            pointer-events: none;
+            z-index: -1;
+        }
+
+        /* Navigation */
+        nav {
+            padding: 40px 60px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid var(--border-light);
+            background: rgba(253, 252, 251, 0.95);
+            backdrop-filter: blur(10px);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .logo {
+            font-family: 'Playfair Display', serif;
+            font-size: 28px;
+            font-weight: 900;
+            color: var(--legal-blue);
+            letter-spacing: -1.5px;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 48px;
+        }
+
+        .nav-links a {
+            text-decoration: none;
+            color: var(--slate-900);
+            font-size: 11px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            transition: color 0.3s ease;
+            position: relative;
+        }
+
+        .nav-links a::after {
+            content: '';
+            position: absolute;
+            bottom: -4px;
+            left: 0;
+            width: 0;
+            height: 1px;
+            background: var(--accent-gold);
+            transition: width 0.3s ease;
+        }
+
+        .nav-links a:hover {
+            color: var(--accent-gold);
+        }
+
+        .nav-links a:hover::after {
+            width: 100%;
+        }
+
+        /* Hero Section */
+        .hero {
+            padding: 180px 24px 140px;
+            text-align: center;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .kicker {
+            font-family: 'Playfair Display', serif;
+            font-style: italic;
+            color: var(--accent-gold);
+            font-size: 19px;
+            display: block;
+            margin-bottom: 28px;
+            opacity: 0;
+            animation: fadeInUp 0.8s ease forwards;
+        }
+
+        @keyframes fadeInUp {
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+        }
+
+        h1 {
+            font-family: 'Playfair Display', serif;
+            font-size: clamp(46px, 8vw, 84px);
+            font-weight: 900;
+            color: var(--legal-blue);
+            line-height: 1.05;
+            margin-bottom: 40px;
+            letter-spacing: -3px;
+            opacity: 0;
+            animation: fadeInUp 0.8s 0.2s ease forwards;
+        }
+
+        .hero p {
+            font-size: 21px;
+            color: var(--text-muted);
+            max-width: 740px;
+            margin: 0 auto 60px;
+            font-weight: 300;
+            line-height: 1.8;
+            opacity: 0;
+            animation: fadeInUp 0.8s 0.4s ease forwards;
+        }
+
+        .cta-group {
+            display: flex;
+            gap: 20px;
+            justify-content: center;
+            flex-wrap: wrap;
+            opacity: 0;
+            animation: fadeInUp 0.8s 0.6s ease forwards;
+        }
+
+        .btn-bespoke {
+            background: var(--legal-blue);
+            color: white;
+            padding: 22px 56px;
+            font-size: 13px;
+            font-weight: 600;
+            text-decoration: none;
+            display: inline-block;
+            letter-spacing: 2.5px;
+            text-transform: uppercase;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            box-shadow: 0 15px 40px rgba(26, 54, 93, 0.12);
+            border: none;
+            cursor: pointer;
+        }
+
+        .btn-bespoke:hover {
+            background: var(--accent-gold);
+            transform: translateY(-4px);
+            box-shadow: 0 20px 50px rgba(197, 160, 89, 0.25);
+        }
+
+        .btn-secondary {
+            background: transparent;
+            color: var(--legal-blue);
+            border: 1.5px solid var(--legal-blue);
+            padding: 20px 56px;
+        }
+
+        .btn-secondary:hover {
+            background: var(--legal-blue);
+            color: white;
+        }
+
+        /* Intelligence Grid */
+        .intel-section {
+            padding: 120px 60px;
+            max-width: 1300px;
+            margin: 0 auto;
+        }
+
+        .section-title {
+            text-align: center;
+            margin-bottom: 80px;
+        }
+
+        .section-title h2 {
+            font-family: 'Playfair Display', serif;
+            font-size: clamp(36px, 5vw, 52px);
+            color: var(--legal-blue);
+            margin-bottom: 20px;
+            letter-spacing: -1.5px;
+        }
+
+        .section-title p {
+            color: var(--text-muted);
+            font-size: 18px;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        .intel-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            gap: 40px;
+        }
+
+        .intel-card {
+            padding: 60px 48px;
+            border: 1px solid var(--border-light);
+            background: white;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .intel-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 3px;
+            height: 0;
+            background: var(--accent-gold);
+            transition: height 0.4s ease;
+        }
+
+        .intel-card:hover {
+            border-color: var(--accent-gold);
+            transform: translateY(-8px);
+            box-shadow: 0 20px 60px rgba(26, 54, 93, 0.08);
+        }
+
+        .intel-card:hover::before {
+            height: 100%;
+        }
+
+        .card-icon {
+            width: 56px;
+            height: 56px;
+            background: linear-gradient(135deg, var(--legal-blue), #2c527a);
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 28px;
+            font-size: 24px;
+        }
+
+        .intel-card h3 {
+            font-family: 'Playfair Display', serif;
+            font-size: 26px;
+            margin-bottom: 18px;
+            color: var(--legal-blue);
+            line-height: 1.3;
+        }
+
+        .intel-card p {
+            color: var(--text-muted);
+            font-size: 15px;
+            line-height: 1.85;
+        }
+
+        /* Social Proof */
+        .proof-section {
+            padding: 80px 60px;
+            background: linear-gradient(180deg, rgba(26, 54, 93, 0.02) 0%, rgba(197, 160, 89, 0.03) 100%);
+            border-top: 1px solid var(--border-light);
+            border-bottom: 1px solid var(--border-light);
+        }
+
+        .proof-grid {
+            max-width: 1100px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 60px;
+            text-align: center;
+        }
+
+        .stat {
+            font-family: 'Playfair Display', serif;
+            font-size: 56px;
+            font-weight: 900;
+            color: var(--legal-blue);
+            display: block;
+            margin-bottom: 12px;
+        }
+
+        .stat-label {
+            font-size: 12px;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            color: var(--text-muted);
+            font-weight: 600;
+        }
+
+        /* Footer */
+        footer {
+            text-align: center;
+            padding: 100px 20px 50px;
+            color: #94A3B8;
+            font-size: 10px;
+            letter-spacing: 2.5px;
+            text-transform: uppercase;
+            font-weight: 500;
+        }
+
+        footer::before {
+            content: '';
+            display: block;
+            width: 60px;
+            height: 1px;
+            background: var(--border-light);
+            margin: 0 auto 40px;
+        }
+
+        /* Responsive */
+        @media (max-width: 900px) {
+            .intel-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .proof-grid {
+                grid-template-columns: 1fr;
+                gap: 40px;
+            }
+
+            nav {
+                padding: 30px 24px;
+            }
+
+            .hero {
+                padding: 120px 24px 80px;
+            }
+
+            .intel-section {
+                padding: 80px 24px;
+            }
+
+            .nav-links {
+                gap: 32px;
+            }
+        }
+
+        @media (max-width: 600px) {
+            .cta-group {
+                flex-direction: column;
+                width: 100%;
+            }
+
+            .btn-bespoke,
+            .btn-secondary {
+                width: 100%;
+                text-align: center;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <nav>
+        <div class="logo">LEXMETRIC</div>
+        <div class="nav-links">
+            <a href="#intelligence">Intelligence</a>
+            <a href="#strategy">Strategy</a>
+            <a href="#access">Access</a>
+        </div>
+    </nav>
+
+    <section class="hero">
+        <span class="kicker">The New Era of Medicaid Audit Defense</span>
+        <h1>Forensic AI<br>for Elder Law.</h1>
+        <p>LexMetric delivers surgical precision in Medicaid divestment analysis. Built for attorneys who demand
+            excellence, not approximation.</p>
+        <div class="cta-group">
+            <a href="#" class="btn-bespoke">Request Private Demo</a>
+            <a href="#" class="btn-bespoke btn-secondary">View Case Studies</a>
+        </div>
+    </section>
+
+    <section class="proof-section">
+        <div class="proof-grid">
+            <div>
+                <span class="stat">$47M+</span>
+                <span class="stat-label">Penalty Exposure Analyzed</span>
+            </div>
+            <div>
+                <span class="stat">23,000+</span>
+                <span class="stat-label">Transactions Reviewed</span>
+            </div>
+            <div>
+                <span class="stat">6 States</span>
+                <span class="stat-label">Jurisdictions Supported</span>
+            </div>
+        </div>
+    </section>
+
+    <section class="intel-section" id="intelligence">
+        <div class="section-title">
+            <h2>Engineered for<br>High-Stakes Defense.</h2>
+            <p>Moving beyond automation. LexMetric provides tier-one intelligence for tier-one practices.</p>
+        </div>
+
+        <div class="intel-grid">
+            <div class="intel-card">
+                <div class="card-icon">🔍</div>
+                <h3>Forensic Precision</h3>
+                <p>Gemini 2.5 Flash AI analyzes 60-month look-back windows, identifying structured payments, anomalous
+                    transfers, and high-risk transactions invisible to manual review.</p>
+            </div>
+
+            <div class="intel-card">
+                <div class="card-icon">⚖️</div>
+                <h3>State-Specific Logic</h3>
+                <p>PA, NY, FL, TX, NJ, CA penalty calculations with regional divisors, date-sensitive rates, and
+                    automated exemption analysis. Your state, your rules, our precision.</p>
+            </div>
+
+            <div class="intel-card">
+                <div class="card-icon">📊</div>
+                <h3>Executive Reports</h3>
+                <p>Editable DOCX reports with embedded analytics, color-coded risk tables, and attorney workspace
+                    sections. Court-ready documentation in minutes, not days.</p>
+            </div>
+
+            <div class="intel-card">
+                <div class="card-icon">🛡️</div>
+                <h3>HIPAA-Grade Security</h3>
+                <p>End-to-end encryption, attorney-client privilege protection, and Row Level Security (RLS). Your
+                    clients' data never leaves your control.</p>
+            </div>
+
+            <div class="intel-card">
+                <div class="card-icon">⚡</div>
+                <h3>Real-Time Override</h3>
+                <p>AI flags, you decide. Add attorney notes, exclude false positives, and adjust risk levels inline.
+                    Full transparency, full control.</p>
+            </div>
+
+            <div class="intel-card">
+                <div class="card-icon">🎯</div>
+                <h3>Strategic Clarity</h3>
+                <p>Transform complex bank statements into actionable legal strategy. Every transaction tells a story—we
+                    make sure you hear it.</p>
+            </div>
+        </div>
+    </section>
+
+    <footer>
+        © 2026 LEXMETRIC. REFINING THE ART OF MEDICAID DEFENSE TECHNOLOGY.
+    </footer>
+
+    <script>
+        // Smooth scroll for anchor links
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                }
+            });
+        });
+    </script>
+</body>
+
+</html>

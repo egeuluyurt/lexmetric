@@ -1,0 +1,776 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Settings | LexMetric Premium</title>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=Inter:wght@300;400;500;600&display=swap"
+        rel="stylesheet">
+    <style>
+        :root {
+            --bg-ivory: #FDFCFB;
+            --slate-900: #1E293B;
+            --accent-gold: #C5A059;
+            --legal-blue: #1a365d;
+            --border-light: rgba(26, 54, 93, 0.08);
+            --text-muted: #64748B;
+            --success-green: #059669;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--bg-ivory);
+            color: var(--slate-900);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* Elegant Paper Texture */
+        body::before {
+            content: "";
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: url('https://www.transparenttextures.com/patterns/cream-paper.png');
+            opacity: 0.15;
+            pointer-events: none;
+            z-index: -1;
+        }
+
+        /* Ambient Background Glow */
+        body::after {
+            content: "";
+            position: fixed;
+            top: -20%;
+            right: -10%;
+            width: 50%;
+            height: 50%;
+            background: radial-gradient(circle, rgba(197, 160, 89, 0.05) 0%, rgba(253, 252, 251, 0) 70%);
+            z-index: -2;
+            pointer-events: none;
+        }
+
+        /* Navbar */
+        .navbar {
+            background: rgba(255, 255, 255, 0.8);
+            backdrop-filter: blur(12px);
+            border-bottom: 1px solid var(--border-light);
+            padding: 20px 0;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .navbar-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 24px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            font-family: 'Playfair Display', serif;
+            font-size: 22px;
+            font-weight: 900;
+            color: var(--legal-blue);
+            letter-spacing: -0.5px;
+            text-decoration: none;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 32px;
+            align-items: center;
+        }
+
+        .nav-link {
+            text-decoration: none;
+            color: var(--text-muted);
+            font-size: 13px;
+            font-weight: 500;
+            transition: color 0.2s;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .nav-link:hover,
+        .nav-link.active {
+            color: var(--legal-blue);
+        }
+
+        .nav-link.active {
+            font-weight: 700;
+            color: var(--accent-gold);
+        }
+
+        .user-profile {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .user-avatar {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            background: var(--legal-blue);
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: 'Playfair Display', serif;
+            font-weight: 700;
+            font-size: 14px;
+            border: 2px solid rgba(197, 160, 89, 0.3);
+        }
+
+        /* Main Content */
+        .main-container {
+            max-width: 1000px;
+            margin: 40px auto;
+            padding: 0 24px;
+            flex: 1;
+        }
+
+        .page-header {
+            margin-bottom: 40px;
+        }
+
+        .page-title {
+            font-family: 'Playfair Display', serif;
+            font-size: 32px;
+            font-weight: 700;
+            color: var(--legal-blue);
+            margin-bottom: 8px;
+        }
+
+        /* Tabs */
+        .tabs {
+            border-bottom: 1px solid var(--border-light);
+            margin-bottom: 40px;
+            display: flex;
+            gap: 40px;
+        }
+
+        .tab {
+            padding: 16px 0;
+            font-size: 13px;
+            font-weight: 500;
+            color: var(--text-muted);
+            cursor: pointer;
+            border-bottom: 2px solid transparent;
+            margin-bottom: -1px;
+            transition: all 0.2s;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .tab:hover {
+            color: var(--legal-blue);
+        }
+
+        .tab.active {
+            color: var(--legal-blue);
+            border-bottom-color: var(--accent-gold);
+            font-weight: 600;
+        }
+
+        /* Sections */
+        .tab-content {
+            display: none;
+            animation: fadeIn 0.4s ease;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        .settings-card {
+            background: white;
+            border: 1px solid var(--border-light);
+            border-radius: 4px;
+            padding: 40px;
+            margin-bottom: 24px;
+            box-shadow: 0 4px 20px rgba(26, 54, 93, 0.03);
+            position: relative;
+        }
+
+        .settings-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 3px;
+            background: linear-gradient(90deg, var(--legal-blue), transparent);
+            opacity: 0.1;
+        }
+
+        .section-title {
+            font-family: 'Playfair Display', serif;
+            font-size: 20px;
+            font-weight: 700;
+            color: var(--legal-blue);
+            margin-bottom: 24px;
+        }
+
+        /* Forms */
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 24px;
+            margin-bottom: 24px;
+        }
+
+        .form-group {
+            margin-bottom: 24px;
+        }
+
+        .form-label {
+            display: block;
+            font-size: 11px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            color: var(--text-muted);
+            margin-bottom: 8px;
+        }
+
+        .form-input,
+        .form-select {
+            width: 100%;
+            padding: 12px 16px;
+            background: var(--bg-ivory);
+            border: 1px solid var(--border-light);
+            border-radius: 2px;
+            font-family: 'Inter', sans-serif;
+            font-size: 14px;
+            color: var(--slate-900);
+            transition: all 0.3s ease;
+        }
+
+        .form-input:focus,
+        .form-select:focus {
+            outline: none;
+            border-color: var(--accent-gold);
+            box-shadow: 0 0 0 3px rgba(197, 160, 89, 0.1);
+            background: white;
+        }
+
+        .form-help {
+            font-size: 12px;
+            color: var(--text-muted);
+            margin-top: 6px;
+            font-style: italic;
+        }
+
+        /* Buttons */
+        .btn {
+            padding: 12px 24px;
+            border-radius: 2px;
+            font-weight: 600;
+            font-size: 12px;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            cursor: pointer;
+            border: none;
+            transition: all 0.3s ease;
+        }
+
+        .btn-primary {
+            background: var(--legal-blue);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: var(--accent-gold);
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(197, 160, 89, 0.2);
+        }
+
+        .btn-secondary {
+            background: white;
+            border: 1px solid var(--border-light);
+            color: var(--legal-blue);
+        }
+
+        .btn-secondary:hover {
+            border-color: var(--legal-blue);
+            background: var(--bg-ivory);
+        }
+
+        /* Checkboxes */
+        .checkbox-group {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 16px;
+        }
+
+        .checkbox-group input[type="checkbox"] {
+            width: 18px;
+            height: 18px;
+            accent-color: var(--legal-blue);
+            cursor: pointer;
+        }
+
+        .checkbox-group label {
+            font-size: 14px;
+            color: var(--slate-900);
+            cursor: pointer;
+        }
+
+        /* Plan Card */
+        .plan-card {
+            background: linear-gradient(135deg, var(--legal-blue), #1e293b);
+            color: white;
+            border-radius: 4px;
+            padding: 40px;
+            margin-bottom: 24px;
+            position: relative;
+            overflow: hidden;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .plan-card::after {
+            content: 'PREMIUM';
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            font-size: 10px;
+            letter-spacing: 2px;
+            color: var(--accent-gold);
+            border: 1px solid var(--accent-gold);
+            padding: 4px 8px;
+            border-radius: 2px;
+        }
+
+        .plan-name {
+            font-family: 'Playfair Display', serif;
+            font-size: 24px;
+            margin-bottom: 8px;
+            color: white;
+        }
+
+        .plan-price {
+            font-size: 36px;
+            font-weight: 300;
+            color: var(--accent-gold);
+            margin-bottom: 24px;
+        }
+
+        .plan-price span {
+            font-size: 14px;
+            color: rgba(255, 255, 255, 0.6);
+        }
+
+        .usage-bar {
+            background: rgba(255, 255, 255, 0.1);
+            height: 4px;
+            border-radius: 2px;
+            margin: 12px 0;
+            overflow: hidden;
+        }
+
+        .usage-fill {
+            background: var(--accent-gold);
+            height: 100%;
+        }
+
+        /* Member Card */
+        .member-card {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px;
+            border: 1px solid var(--border-light);
+            border-radius: 4px;
+            margin-bottom: 12px;
+            transition: all 0.2s;
+        }
+
+        .member-card:hover {
+            border-color: var(--accent-gold);
+            background: white;
+        }
+
+        .member-details h4 {
+            font-family: 'Playfair Display', serif;
+            font-size: 16px;
+            font-weight: 600;
+            color: var(--legal-blue);
+            margin-bottom: 4px;
+        }
+
+        .member-details p {
+            font-size: 12px;
+            color: var(--text-muted);
+        }
+
+        /* Tables */
+        .permissions-table {
+            width: 100%;
+            font-size: 14px;
+            border-collapse: collapse;
+        }
+
+        .permissions-table th {
+            text-align: left;
+            padding: 16px;
+            font-size: 11px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: var(--text-muted);
+            border-bottom: 2px solid var(--border-light);
+        }
+
+        .permissions-table td {
+            padding: 16px;
+            border-bottom: 1px solid var(--border-light);
+            color: var(--slate-900);
+        }
+
+        .permissions-table tr:last-child td {
+            border-bottom: none;
+        }
+
+        .check-icon {
+            color: var(--success-green);
+        }
+
+        @media (max-width: 768px) {
+            .form-row {
+                grid-template-columns: 1fr;
+            }
+
+            .tabs {
+                overflow-x: auto;
+                padding-bottom: 4px;
+            }
+
+            .navbar-container {
+                flex-direction: column;
+                gap: 16px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <!-- Navbar -->
+    <nav class="navbar">
+        <div class="navbar-container">
+            <div style="display: flex; align-items: center; gap: 40px;">
+                <a href="landing.html" class="logo">LEXMETRIC</a>
+                <div class="nav-links">
+                    <a href="dashboard.html" class="nav-link">Cases</a>
+                    <a href="settings.html" class="nav-link active">Settings</a>
+                    <a href="#" class="nav-link">Help</a>
+                </div>
+            </div>
+            <div class="user-profile">
+                <span style="font-size: 13px; font-weight: 500; color: var(--legal-blue);">Sarah Chen</span>
+                <div class="user-avatar">SC</div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Container -->
+    <div class="main-container">
+
+        <!-- Tabs -->
+        <div class="tabs">
+            <div class="tab active" onclick="switchTab('profile')">Profile</div>
+            <div class="tab" onclick="switchTab('preferences')">Preferences</div>
+            <div class="tab" onclick="switchTab('billing')">Billing</div>
+            <div class="tab" onclick="switchTab('team')">Team</div>
+        </div>
+
+        <!-- Profile Tab -->
+        <div id="profile-tab" class="tab-content active">
+            <div class="settings-card">
+                <h2 class="section-title">Personal Information</h2>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label class="form-label">First Name</label>
+                        <input type="text" class="form-input" value="Sarah">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Last Name</label>
+                        <input type="text" class="form-input" value="Chen">
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">Email Address</label>
+                    <input type="email" class="form-input" value="sarah.chen@elderlaw.com">
+                    <p class="form-help" style="color: var(--success-green);">✓ Verified Account</p>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">Firm Name</label>
+                    <input type="text" class="form-input" value="Chen Elder Law Associates">
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label class="form-label">Bar Association #</label>
+                        <input type="text" class="form-input" value="NY-123456">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Jurisdiction</label>
+                        <select class="form-select">
+                            <option value="NY" selected>New York</option>
+                            <option value="PA">Pennsylvania</option>
+                            <option value="FL">Florida</option>
+                            <option value="CA">California</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div style="margin-top: 32px;">
+                    <button class="btn btn-primary">Save Changes</button>
+                    <button class="btn btn-secondary" style="margin-left: 12px;">Cancel</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Preferences Tab -->
+        <div id="preferences-tab" class="tab-content">
+            <div class="settings-card">
+                <h2 class="section-title">Analysis Configuration</h2>
+
+                <div class="form-group">
+                    <label class="form-label">Default Jurisdiction</label>
+                    <select class="form-select">
+                        <option value="NY" selected>New York</option>
+                        <option value="PA">Pennsylvania</option>
+                        <option value="FL">Florida</option>
+                    </select>
+                    <p class="form-help">Automatically applied to new cases.</p>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">High Risk Threshold ($)</label>
+                    <input type="number" class="form-input" value="500">
+                    <p class="form-help">Transactions above this value are automatically flagged.</p>
+                </div>
+
+                <div
+                    style="margin-top: 32px; margin-bottom: 24px; border-top: 1px solid var(--border-light); padding-top: 24px;">
+                    <label class="form-label" style="margin-bottom: 16px;">Auto-Exclusion Rules</label>
+                    <div class="checkbox-group">
+                        <input type="checkbox" id="pharmacy" checked>
+                        <label for="pharmacy">Exclude known pharmacy transactions</label>
+                    </div>
+                    <div class="checkbox-group">
+                        <input type="checkbox" id="utilities" checked>
+                        <label for="utilities">Exclude routine utility payments</label>
+                    </div>
+                    <div class="checkbox-group">
+                        <input type="checkbox" id="medicare">
+                        <label for="medicare">Exclude Medicare/Medicaid premiums</label>
+                    </div>
+                </div>
+
+                <button class="btn btn-primary">Update Configuration</button>
+            </div>
+
+            <div class="settings-card">
+                <h2 class="section-title">Notifications</h2>
+                <div class="checkbox-group">
+                    <input type="checkbox" id="email-complete" checked>
+                    <label for="email-complete">Email when analysis completes</label>
+                </div>
+                <div class="checkbox-group">
+                    <input type="checkbox" id="weekly-summary" checked>
+                    <label for="weekly-summary">Send weekly executive summary</label>
+                </div>
+            </div>
+        </div>
+
+        <!-- Billing Tab -->
+        <div id="billing-tab" class="tab-content">
+            <div class="plan-card">
+                <div class="plan-name">Solo Attorney Plan</div>
+                <div class="plan-price">$49<span>/month</span></div>
+                <p style="color: rgba(255,255,255,0.7); font-size: 13px; margin-bottom: 24px;">Next billing date:
+                    February 1, 2026</p>
+                <button class="btn" style="background: white; color: var(--legal-blue);">Manage Subscription</button>
+            </div>
+
+            <div class="settings-card">
+                <h2 class="section-title">Resource Usage</h2>
+
+                <div style="margin-bottom: 24px;">
+                    <div
+                        style="display: flex; justify-content: space-between; margin-bottom: 8px; font-size: 13px; font-weight: 600;">
+                        <span>Active Cases</span>
+                        <span style="color: var(--text-muted);">3 / 5</span>
+                    </div>
+                    <div class="usage-bar" style="background: var(--border-light);">
+                        <div class="usage-fill" style="width: 60%; background: var(--legal-blue);"></div>
+                    </div>
+                </div>
+
+                <div>
+                    <div
+                        style="display: flex; justify-content: space-between; margin-bottom: 8px; font-size: 13px; font-weight: 600;">
+                        <span>Secure Storage</span>
+                        <span style="color: var(--text-muted);">450 MB / 5 GB</span>
+                    </div>
+                    <div class="usage-bar" style="background: var(--border-light);">
+                        <div class="usage-fill" style="width: 9%; background: var(--legal-blue);"></div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="settings-card">
+                <h2 class="section-title">Payment Method</h2>
+                <div style="display: flex; justify-content: space-between; align-items: center;">
+                    <div style="display: flex; align-items: center; gap: 16px;">
+                        <div
+                            style="background: var(--bg-ivory); padding: 8px; border: 1px solid var(--border-light); border-radius: 4px;">
+                            <span style="font-weight: 700; color: var(--legal-blue);">VISA</span>
+                        </div>
+                        <div>
+                            <p style="font-weight: 600; font-size: 14px;">Visa ending in 4242</p>
+                            <p style="font-size: 12px; color: var(--text-muted);">Expires 12/2027</p>
+                        </div>
+                    </div>
+                    <button class="btn btn-secondary">Update</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Team Tab -->
+        <div id="team-tab" class="tab-content">
+            <div class="settings-card">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px;">
+                    <h2 class="section-title" style="margin: 0;">Team Members (2 / 5)</h2>
+                    <button class="btn btn-primary">+ Invite Member</button>
+                </div>
+
+                <div class="member-card">
+                    <div style="display: flex; align-items: center; gap: 16px;">
+                        <div class="user-avatar">SC</div>
+                        <div class="member-details">
+                            <h4>Sarah Chen</h4>
+                            <p>sarah.chen@elderlaw.com • <span
+                                    style="color: var(--legal-blue); font-weight: 600;">Admin</span></p>
+                        </div>
+                    </div>
+                    <span style="font-size: 12px; color: var(--text-muted); font-style: italic;">(Current User)</span>
+                </div>
+
+                <div class="member-card">
+                    <div style="display: flex; align-items: center; gap: 16px;">
+                        <div class="user-avatar"
+                            style="background: var(--success-green); border-color: rgba(5, 150, 105, 0.3);">MR</div>
+                        <div class="member-details">
+                            <h4>Michael Rodriguez</h4>
+                            <p>michael@elderlaw.com • Attorney</p>
+                        </div>
+                    </div>
+                    <div style="display: flex; gap: 8px;">
+                        <select class="form-select" style="padding: 6px 12px; width: auto; font-size: 12px;">
+                            <option>Attorney</option>
+                            <option>Admin</option>
+                        </select>
+                        <button class="btn btn-secondary"
+                            style="padding: 6px 12px; font-size: 12px; color: #DC2626; border-color: rgba(220, 38, 38, 0.2);">Remove</button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="settings-card">
+                <h2 class="section-title">Role Permissions</h2>
+                <table class="permissions-table">
+                    <thead>
+                        <tr>
+                            <th>Role</th>
+                            <th style="text-align: center;">View Cases</th>
+                            <th style="text-align: center;">Edit Cases</th>
+                            <th style="text-align: center;">Export</th>
+                            <th style="text-align: center;">Manage Team</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td style="font-weight: 600;">Admin</td>
+                            <td style="text-align: center;"><span class="check-icon">✓</span></td>
+                            <td style="text-align: center;"><span class="check-icon">✓</span></td>
+                            <td style="text-align: center;"><span class="check-icon">✓</span></td>
+                            <td style="text-align: center;"><span class="check-icon">✓</span></td>
+                        </tr>
+                        <tr>
+                            <td style="font-weight: 600;">Attorney</td>
+                            <td style="text-align: center;"><span class="check-icon">✓</span></td>
+                            <td style="text-align: center;"><span class="check-icon">✓</span></td>
+                            <td style="text-align: center;"><span class="check-icon">✓</span></td>
+                            <td style="text-align: center; color: var(--border-light);">—</td>
+                        </tr>
+                        <tr>
+                            <td style="font-weight: 600;">Analyst</td>
+                            <td style="text-align: center;"><span class="check-icon">✓</span></td>
+                            <td style="text-align: center; color: var(--border-light);">—</td>
+                            <td style="text-align: center; color: var(--border-light);">—</td>
+                            <td style="text-align: center; color: var(--border-light);">—</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+    </div>
+
+    <script>
+        function switchTab(tabName) {
+            // Hide all tabs
+            document.querySelectorAll('.tab-content').forEach(tab => {
+                tab.classList.remove('active');
+            });
+
+            // Remove active from all tab buttons
+            document.querySelectorAll('.tab').forEach(tab => {
+                tab.classList.remove('active');
+            });
+
+            // Show selected tab
+            document.getElementById(tabName + '-tab').classList.add('active');
+
+            // Activate tab button
+            const clickedTab = Array.from(document.querySelectorAll('.tab')).find(t => t.innerText.toLowerCase().includes(tabName) || t.getAttribute('onclick').includes(tabName));
+            if (clickedTab) clickedTab.classList.add('active');
+        }
+    </script>
+</body>
+
+</html>
