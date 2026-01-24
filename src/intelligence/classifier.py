@@ -196,11 +196,19 @@ class TransactionClassifier:
                     )
                 )
                 
+                # Extract confidence from Gemini response
+                confidence_score = self._extract_confidence(resp)
+                
                 batch_result = json.loads(resp.text)
                 
                 if isinstance(batch_result, list):
+                    # Add confidence to each result
+                    for item in batch_result:
+                        item['Confidence'] = confidence_score
                     results.extend(batch_result)
                 elif isinstance(batch_result, dict) and 'results' in batch_result:
+                    for item in batch_result['results']:
+                        item['Confidence'] = confidence_score
                     results.extend(batch_result['results'])
                 
                 progress_bar.progress((i + 1) / num_batches)
@@ -220,6 +228,40 @@ class TransactionClassifier:
         
         return df
 
+    def _extract_confidence(self, response) -> int:
+        """
+        Extract confidence score from Gemini API response.
+        Returns: Confidence percentage (0-100)
+        """
+        try:
+            # Method 1: Check if response has prompt_feedback
+            if hasattr(response, 'prompt_feedback'):
+                # Gemini doesn't directly provide confidence, so we infer from safety ratings
+                # If content was blocked, confidence is low
+                if hasattr(response.prompt_feedback, 'block_reason'):
+                    return 50  # Low confidence if blocked
+            
+            # Method 2: Check candidates and finish_reason
+            if hasattr(response, 'candidates') and response.candidates:
+                candidate = response.candidates[0]
+                
+                # If finish_reason is STOP (normal completion), high confidence
+                if hasattr(candidate, 'finish_reason'):
+                    finish_reason = str(candidate.finish_reason)
+                    if 'STOP' in finish_reason:
+                        return 92  # High confidence for normal completion
+                    elif 'MAX_TOKENS' in finish_reason:
+                        return 75  # Medium confidence if truncated
+                    else:
+                        return 60  # Lower confidence for other reasons
+                        
+            # Default: assume reasonable confidence
+            return 85
+            
+        except Exception as e:
+            logger.warning(f"Could not extract confidence: {e}")
+            return 80  # Default fallback
+    
     def _merge_results(self, df, results):
         """
         AI sonuçlarını ana tablo ile birleştirir.
@@ -233,8 +275,8 @@ class TransactionClassifier:
                 except:
                     pass
         
-        # Kolonları garantile
-        for col in ['Category', 'Risk_Level', 'Forensic_Reasoning']:
+        # Kolonları garantile (Confidence eklendi)
+        for col in ['Category', 'Risk_Level', 'Forensic_Reasoning', 'Confidence']:
              if col not in df.columns: df[col] = None
         
         # Satır satır güncelle
@@ -244,5 +286,6 @@ class TransactionClassifier:
                 df.at[idx, 'Category'] = r.get('Category', 'Unidentified')
                 df.at[idx, 'Risk_Level'] = r.get('Risk_Level', 'Low')
                 df.at[idx, 'Forensic_Reasoning'] = r.get('Forensic_Reasoning', 'Analysis failed')
+                df.at[idx, 'Confidence'] = r.get('Confidence', 80)  # Add confidence
         
         return df

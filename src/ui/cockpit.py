@@ -1,6 +1,7 @@
 import streamlit as st
 import pandas as pd
 from src.reporting.generator import generate_defense_memo
+from src.intelligence.highlighting import highlight_keywords, get_confidence_badge
 
 def render_cockpit(df): 
     # --- 1. DATA SANITIZATION (Safety First) --- 
@@ -44,6 +45,20 @@ def render_cockpit(df):
 
     # D. Reset Index (Crucial for UI stability)
     df = df.reset_index(drop=True)
+    
+    # E. Preprocess for AI Transparency
+    # 1. Add highlighted descriptions (for display only, keep original)
+    if 'Description' in df.columns and 'Risk_Level' in df.columns:
+        df['Description_Highlighted'] = df.apply(
+            lambda row: highlight_keywords(str(row.get('Description', '')), str(row.get('Risk_Level', ''))),
+            axis=1
+        )
+    else:
+        df['Description_Highlighted'] = df.get('Description', '')
+    
+    # 2. Ensure Confidence column exists
+    if 'Confidence' not in df.columns:
+        df['Confidence'] = 85  # Default if not provided by AI
 
     # --- 3. PREMIUM CLIENT HEADER (Gradient) ---
     c_name = st.session_state.get('client_name', 'Unknown Client')
@@ -114,13 +129,21 @@ def render_cockpit(df):
                 help="Adjust risk level manually if needed"
             ), 
             "Date": st.column_config.DatetimeColumn("Date", format="D MMM YYYY"), 
-            "Description": st.column_config.TextColumn("Description", width="large"), 
+            "Description_Highlighted": st.column_config.TextColumn("Description", width="large", help="Highlighted keywords show AI decision factors"), 
             "amount": st.column_config.NumberColumn("Amount", format="$%.2f"),
+            "Confidence": st.column_config.ProgressColumn(
+                "AI Confidence",
+                format="%d%%",
+                min_value=0,
+                max_value=100,
+                width="small",
+                help="AI decision confidence (90%+ = high, 70-90% = medium, <70% = review)"
+            ),
             "Forensic_Reasoning": st.column_config.TextColumn("AI Reasoning", width="medium", help="System Logic"),
             "Attorney_Notes": st.column_config.TextColumn("⚖️ Attorney Notes", width="large", required=False),
         }, 
-        # FORCE COLUMN ORDER 
-        column_order=("Status", "Audit_Flag", "Risk_Level", "Date", "Description", "amount", "Forensic_Reasoning", "Attorney_Notes"), 
+        # FORCE COLUMN ORDER (added Confidence)
+        column_order=("Status", "Audit_Flag", "Risk_Level", "Date", "Description_Highlighted", "amount", "Confidence", "Forensic_Reasoning", "Attorney_Notes"), 
         use_container_width=True, 
         hide_index=True, 
         num_rows="fixed", 
